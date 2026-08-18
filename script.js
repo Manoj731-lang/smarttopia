@@ -296,13 +296,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // 4. Render & Filter Programs / Courses
   // --------------------------------------------------------------------------
   const programsGrid = document.getElementById('programsGrid');
-  
+
   const renderPrograms = (category = 'all') => {
     if (!programsGrid) return;
     programsGrid.innerHTML = '';
 
-    const filtered = category === 'all' 
-      ? programsData 
+    const filtered = category === 'all'
+      ? programsData
       : programsData.filter(p => p.category === category);
 
     filtered.forEach(prog => {
@@ -372,8 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!projectsGrid) return;
     projectsGrid.innerHTML = '';
 
-    const filtered = category === 'all' 
-      ? projectsData 
+    const filtered = category === 'all'
+      ? projectsData
       : projectsData.filter(p => p.category === category);
 
     filtered.forEach(proj => {
@@ -671,5 +671,414 @@ document.addEventListener('DOMContentLoaded', () => {
   const currentYearElem = document.getElementById('currentYear');
   if (currentYearElem) {
     currentYearElem.textContent = new Date().getFullYear();
+  }
+
+  // --------------------------------------------------------------------------
+  // 11. Smarttopia AI Chatbot & ChatGPT Multi-Platform Engine
+  // --------------------------------------------------------------------------
+  const chatbotTrigger = document.getElementById('chatbotTrigger');
+  const chatbotCard = document.getElementById('chatbotCard');
+  const chatbotCloseBtn = document.getElementById('chatbotCloseBtn');
+  const chatbotResetBtn = document.getElementById('chatbotResetBtn');
+  const chatbotSettingsBtn = document.getElementById('chatbotSettingsBtn');
+  const chatbotForm = document.getElementById('chatbotForm');
+  const chatbotInput = document.getElementById('chatbotInput');
+  const chatbotBody = document.getElementById('chatbotBody');
+  const chatbotTyping = document.getElementById('chatbotTyping');
+  const chatbotBadge = document.getElementById('chatbotBadge');
+  const chatPrompts = document.getElementById('chatPrompts');
+  const chatGptModal = document.getElementById('chatGptModal');
+  const chatGptModalClose = document.getElementById('chatGptModalClose');
+  const openAiApiKeyInput = document.getElementById('openAiApiKeyInput');
+  const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
+  const clearApiKeyBtn = document.getElementById('clearApiKeyBtn');
+  const apiStatusText = document.getElementById('apiStatusText');
+
+  // Company Knowledge Base
+  const companyKnowledge = [
+    {
+      keywords: ['program', 'course', 'training', 'learn', 'study', 'offer', 'curriculum', 'syllabus'],
+      response: `<strong>Smarttopia Edutech offers specialized, industry-focused programs:</strong><br>
+      <ul>
+        <li><strong>Python & Django Development:</strong> Core Python, OOP, Django framework, REST APIs, PostgreSQL.</li>
+        <li><strong>Full Stack Web Development:</strong> HTML5, CSS3, JavaScript, React.js, Node.js, Express & MongoDB (MERN).</li>
+        <li><strong>Data Science & Analytics:</strong> Python, Pandas, NumPy, PowerBI, SQL, Machine Learning algorithms.</li>
+        <li><strong>AI & Machine Learning:</strong> Neural Networks, Deep Learning, TensorFlow, PyTorch, Computer Vision.</li>
+        <li><strong>VLSI Design & Verification:</strong> Verilog, SystemVerilog, RTL design, ASIC design flow.</li>
+        <li><strong>Embedded Systems & IoT:</strong> C/C++, Microcontrollers (ARM/ESP32), RTOS, Sensors & IoT Protocols.</li>
+        <li><strong>Cyber Security:</strong> Network Security, Ethical Hacking, Web Security, Penetration Testing.</li>
+        <li><strong>Cloud Computing:</strong> AWS & Azure Cloud Architecture, DevOps basics, Docker & Kubernetes.</li>
+      </ul>
+      <em>All programs include hands-on capstone projects and live mentor support!</em>`
+    },
+    {
+      keywords: ['intern', 'internship', 'stipend', 'project', 'capstone', 'practical', 'experience', 'hands-on'],
+      response: `<strong>Smarttopia Internship Program Highlights:</strong><br>
+      <ul>
+        <li><strong>Real-World Capstones:</strong> Work on enterprise-level projects designed with industry partners.</li>
+        <li><strong>Live Mentorship:</strong> Direct code reviews and guidance from senior engineers.</li>
+        <li><strong>Verified Certificates:</strong> Experience & completion certificates to boost your resume.</li>
+        <li><strong>Flexible Modes:</strong> Available in online remote and offline classroom formats.</li>
+        <li><strong>Interview Readiness:</strong> Project presentation preparation for top tech recruiters.</li>
+      </ul>
+      Click <strong>WhatsApp</strong> above to talk with an internship counselor!`
+    },
+    {
+      keywords: ['placement', 'job', 'hire', 'hiring', 'interview', 'career', 'salary', 'package', 'company', 'partner', 'guarantee'],
+      response: `<strong>100% Placement & Career Support at Smarttopia Edutech:</strong><br>
+      <ul>
+        <li><strong>Student Outcomes:</strong> 1000+ students empowered, 25+ hiring partner companies.</li>
+        <li><strong>1-on-1 Mock Interviews:</strong> Technical & HR interview preparation with industry experts.</li>
+        <li><strong>Resume & Portfolio Polishing:</strong> ATS-optimized resume building and GitHub/LinkedIn branding.</li>
+        <li><strong>Exclusive Job Drives:</strong> Direct hiring drives and referral pipelines with partner startups and IT firms.</li>
+      </ul>`
+    },
+    {
+      keywords: ['contact', 'address', 'location', 'phone', 'email', 'office', 'where', 'map', 'bengaluru', 'bangalore', 'number'],
+      response: `<strong>Smarttopia Edutech Contact & Location Details:</strong><br>
+      📍 <strong>Address:</strong> 5th Floor, 1318, JP Nagar Phase 2, Bengaluru, Karnataka, 560078<br>
+      📞 <strong>Phone:</strong> <a href="tel:+917780271969" style="color:var(--primary-600); text-decoration:underline;">+91 77802 71969</a><br>
+      ✉️ <strong>Email:</strong> <a href="mailto:hr@smarttopiaedutech.com" style="color:var(--primary-600); text-decoration:underline;">hr@smarttopiaedutech.com</a><br>
+      🌐 <strong>Website:</strong> www.smarttopiaedutech.com<br>
+      ⏱️ <strong>Operating Hours:</strong> Monday – Saturday: 9:00 AM – 7:00 PM IST`
+    },
+    {
+      keywords: ['fee', 'fees', 'cost', 'price', 'pricing', 'discount', 'scholarship', 'installment', 'pay', 'payment'],
+      response: `<strong>Smarttopia Program Fee & Payment Flexibility:</strong><br>
+      <ul>
+        <li>All our courses are priced affordably to ensure quality education is accessible to everyone.</li>
+        <li>Flexible no-cost installment payment options available for students.</li>
+        <li>Early-bird discounts and merit scholarships offered for top performers.</li>
+      </ul>
+      Call us at <strong>+91 77802 71969</strong> or click <strong>WhatsApp</strong> for exact program fee details!`
+    },
+    {
+      keywords: ['who', 'about', 'smarttopia', 'company', 'vision', 'mission', 'why', 'founder'],
+      response: `<strong>About Smarttopia Edutech:</strong><br>
+      Smarttopia Edutech is a premier tech skill-building ecosystem dedicated to bridging the gap between university education and real-world tech industry expectations.<br><br>
+      We empower students and working professionals with cutting-edge software engineering, AI, VLSI, and data domain skills combined with practical project experience and placement guidance.`
+    },
+    {
+      keywords: ['python', 'django'],
+      response: `<strong>Python & Django Specialization:</strong><br>
+      Covers Python Fundamentals, Advanced Data Structures, Object-Oriented Programming, Django Web Framework, REST APIs, Database Integration (PostgreSQL/SQLite), and Full Stack Deployment on Cloud servers.`
+    },
+    {
+      keywords: ['data science', 'ai', 'machine learning', 'ml'],
+      response: `<strong>Data Science & AI/ML Track:</strong><br>
+      Comprehensive training covering Data Cleaning, EDA, Predictive Modeling, Deep Learning, Natural Language Processing (NLP), and deployment of AI models into production applications.`
+    },
+    {
+      keywords: ['vlsi', 'embedded', 'iot'],
+      response: `<strong>Core Engineering (VLSI & Embedded Systems):</strong><br>
+      Focuses on Hardware Description Languages (Verilog), FPGA/ASIC design principles, Microcontrollers (ARM Cortex/ESP32), RTOS, and real-time IoT hardware interfacing.`
+    }
+  ];
+
+  // Helper: Get OpenAI API Key
+  const getOpenAiKey = () => localStorage.getItem('smarttopia_openai_key') || '';
+
+  // Update UI Status
+  const updateAiEngineStatus = () => {
+    const key = getOpenAiKey();
+    if (apiStatusText) {
+      if (key) {
+        apiStatusText.textContent = 'ChatGPT Online';
+        if (apiStatusText.parentElement) {
+          apiStatusText.parentElement.style.background = 'rgba(37, 99, 235, 0.2)';
+          apiStatusText.parentElement.style.color = '#60a5fa';
+          apiStatusText.parentElement.style.borderColor = 'rgba(96, 165, 250, 0.3)';
+        }
+      } else {
+        apiStatusText.textContent = 'Smart Engine';
+        if (apiStatusText.parentElement) {
+          apiStatusText.parentElement.style.background = 'rgba(16, 185, 129, 0.2)';
+          apiStatusText.parentElement.style.color = '#34d399';
+          apiStatusText.parentElement.style.borderColor = 'rgba(52, 211, 153, 0.3)';
+        }
+      }
+    }
+  };
+
+  updateAiEngineStatus();
+
+  // Toggle Chatbot Card
+  if (chatbotTrigger && chatbotCard) {
+    chatbotTrigger.addEventListener('click', () => {
+      const isActive = chatbotCard.classList.contains('active');
+      if (isActive) {
+        chatbotCard.classList.remove('active');
+        chatbotCard.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('chatbot-open');
+      } else {
+        chatbotCard.classList.add('active');
+        chatbotCard.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('chatbot-open');
+        if (chatbotBadge) chatbotBadge.style.opacity = '0';
+        if (chatbotInput) chatbotInput.focus();
+      }
+    });
+  }
+
+  if (chatbotCloseBtn && chatbotCard) {
+    chatbotCloseBtn.addEventListener('click', () => {
+      chatbotCard.classList.remove('active');
+      chatbotCard.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('chatbot-open');
+    });
+  }
+
+  // Open Settings Modal
+  if (chatbotSettingsBtn && chatGptModal) {
+    chatbotSettingsBtn.addEventListener('click', () => {
+      if (openAiApiKeyInput) openAiApiKeyInput.value = getOpenAiKey();
+      chatGptModal.classList.add('active');
+    });
+  }
+
+  if (chatGptModalClose && chatGptModal) {
+    chatGptModalClose.addEventListener('click', () => {
+      chatGptModal.classList.remove('active');
+    });
+  }
+
+  if (saveApiKeyBtn && openAiApiKeyInput && chatGptModal) {
+    saveApiKeyBtn.addEventListener('click', () => {
+      const keyVal = openAiApiKeyInput.value.trim();
+      if (keyVal) {
+        localStorage.setItem('smarttopia_openai_key', keyVal);
+        alert('OpenAI ChatGPT API Key saved successfully!');
+      } else {
+        localStorage.removeItem('smarttopia_openai_key');
+        alert('API Key cleared. Reverted to Smarttopia Built-in Engine.');
+      }
+      chatGptModal.classList.remove('active');
+      updateAiEngineStatus();
+    });
+  }
+
+  if (clearApiKeyBtn && openAiApiKeyInput) {
+    clearApiKeyBtn.addEventListener('click', () => {
+      localStorage.removeItem('smarttopia_openai_key');
+      openAiApiKeyInput.value = '';
+      alert('API key removed. Chatbot will use Built-in Smart Engine.');
+      updateAiEngineStatus();
+    });
+  }
+
+  // Scroll Chat to Bottom
+  const scrollChatToBottom = () => {
+    if (chatbotBody) {
+      chatbotBody.scrollTop = chatbotBody.scrollHeight;
+    }
+  };
+
+  const escapeHtml = (text) => {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  };
+
+  // Append Message Element
+  const appendMessage = (sender, contentHtml) => {
+    if (!chatbotBody) return;
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `chat-message ${sender === 'user' ? 'user-message' : 'ai-message'}`;
+
+    if (sender === 'ai') {
+      msgDiv.innerHTML = `
+        <div class="message-avatar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="4" y="8" width="16" height="12" rx="4"/>
+            <circle cx="9" cy="13" r="1.5" fill="currentColor"/>
+            <circle cx="15" cy="13" r="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="message-content">
+          ${contentHtml}
+        </div>
+      `;
+    } else {
+      msgDiv.innerHTML = `
+        <div class="message-content">
+          <p>${escapeHtml(contentHtml)}</p>
+        </div>
+      `;
+    }
+
+    chatbotBody.appendChild(msgDiv);
+    scrollChatToBottom();
+  };
+
+  // Process User Input via OpenAI ChatGPT API
+  const queryOpenAiApi = async (userPrompt, apiKey) => {
+    const systemPrompt = `You are Smarttopia AI, the official intelligent virtual assistant for Smarttopia Edutech.
+Smarttopia Edutech is an ed-tech & skill training company located at: 5th Floor, 1318, JP Nagar Phase 2, Bengaluru, Karnataka, 560078. Phone: +91 77802 71969, Email: hr@smarttopiaedutech.com.
+We offer programs in: Python & Django Development, Full Stack Web Dev (MERN), Data Science & Analytics, Artificial Intelligence & Machine Learning, VLSI Design, Embedded Systems & IoT, Cyber Security, and Cloud Computing.
+We offer 100% placement assistance, hands-on internships, capstone projects, 1-on-1 mentorship, resume reviews, and mock interviews.
+Answer user questions concisely, professionally, and accurately formatted in clean HTML tags (<p>, <ul>, <li>, <strong>).`;
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 450
+      })
+    });
+
+    if (!response.ok) {
+      const errJson = await response.json().catch(() => ({}));
+      throw new Error(errJson.error?.message || `OpenAI API returned status ${response.status}`);
+    }
+
+    const data = await response.json();
+    let reply = data.choices[0]?.message?.content || 'Thank you for contacting Smarttopia Edutech! How else can I assist you?';
+    reply = reply.replace(/^```html\n?/i, '').replace(/\n?```$/i, '');
+    return reply;
+  };
+
+  // Generate Fallback Response from Built-in Knowledge
+  const matchBuiltInKnowledge = (queryText) => {
+    const lower = queryText.toLowerCase();
+    
+    for (const item of companyKnowledge) {
+      if (item.keywords.some(kw => lower.includes(kw))) {
+        return item.response;
+      }
+    }
+
+    // Default Fallback
+    return `Thank you for asking about <strong>Smarttopia Edutech</strong>! 👋<br><br>
+    We offer specialized tech programs in Full Stack, Data Science, AI/ML, Python, VLSI, and Embedded Systems with guaranteed placement support.<br><br>
+    Would you like to know more about:
+    <ul>
+      <li>📚 <strong>Our Programs & Courses</strong></li>
+      <li>💼 <strong>Internship Opportunities</strong></li>
+      <li>🎯 <strong>Placement Assistance</strong></li>
+      <li>📍 <strong>Contact & Location</strong></li>
+    </ul>
+    You can also click the <strong>WhatsApp</strong> button above to chat directly with our career counselor!`;
+  };
+
+  // Handle Form Submission
+  const handleChatSubmit = async (queryText) => {
+    if (!queryText.trim()) return;
+
+    // Render User Message
+    appendMessage('user', queryText);
+    if (chatbotInput) chatbotInput.value = '';
+
+    // Show Typing Indicator
+    if (chatbotTyping) chatbotTyping.style.display = 'flex';
+    scrollChatToBottom();
+
+    const apiKey = getOpenAiKey();
+
+    try {
+      let botResponseHtml = '';
+
+      if (apiKey) {
+        try {
+          botResponseHtml = await queryOpenAiApi(queryText, apiKey);
+        } catch (apiErr) {
+          console.warn('OpenAI API Error, falling back to built-in knowledge engine:', apiErr);
+          botResponseHtml = `<em>(OpenAI Key Notice: ${apiErr.message}. Showing Built-in Smarttopia Knowledge)</em><br><br>` + matchBuiltInKnowledge(queryText);
+        }
+      } else {
+        // Simulate small natural typing delay for built-in engine
+        await new Promise(r => setTimeout(r, 650));
+        botResponseHtml = matchBuiltInKnowledge(queryText);
+      }
+
+      if (chatbotTyping) chatbotTyping.style.display = 'none';
+      appendMessage('ai', botResponseHtml);
+
+    } catch (err) {
+      if (chatbotTyping) chatbotTyping.style.display = 'none';
+      appendMessage('ai', 'Sorry, I encountered an issue processing your request. Please call us at <strong>+91 77802 71969</strong> or click WhatsApp above!');
+    }
+  };
+
+  if (chatbotForm && chatbotInput) {
+    chatbotForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handleChatSubmit(chatbotInput.value);
+    });
+  }
+
+  // Handle Quick Prompt Chips Click
+  if (chatPrompts) {
+    chatPrompts.addEventListener('click', (e) => {
+      const chip = e.target.closest('.prompt-chip');
+      if (chip) {
+        const promptText = chip.getAttribute('data-prompt') || chip.innerText.trim();
+        handleChatSubmit(promptText);
+      }
+    });
+  }
+
+  // Reset Conversation
+  if (chatbotResetBtn) {
+    chatbotResetBtn.addEventListener('click', () => {
+      if (!chatbotBody) return;
+      chatbotBody.innerHTML = `
+        <div class="chat-message ai-message">
+          <div class="message-avatar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="4" y="8" width="16" height="12" rx="4"/>
+              <circle cx="9" cy="13" r="1.5" fill="currentColor"/>
+              <circle cx="15" cy="13" r="1.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="message-content">
+            <p>Hello! 👋 Welcome to <strong>Smarttopia Edutech</strong>.</p>
+            <p>I am your AI Assistant. How can I help you build your tech career today?</p>
+          </div>
+        </div>
+        <div class="chat-prompts-container" id="chatPrompts">
+          <span class="prompts-label">Quick Questions:</span>
+          <div class="prompts-grid">
+            <button class="prompt-chip" data-prompt="What programs do you offer?">
+              📚 What programs do you offer?
+            </button>
+            <button class="prompt-chip" data-prompt="Tell me about internship opportunities">
+              💼 Internship Opportunities
+            </button>
+            <button class="prompt-chip" data-prompt="How does placement support work?">
+              🎯 100% Placement Support
+            </button>
+            <button class="prompt-chip" data-prompt="Where is Smarttopia Edutech located and how to contact?">
+              📍 Office Location & Contact
+            </button>
+            <button class="prompt-chip" data-prompt="What is Python & Django course syllabus and fees?">
+              🐍 Python & Django Details
+            </button>
+            <button class="prompt-chip" data-prompt="Tell me about Data Science & AI programs">
+              🤖 Data Science & AI/ML
+            </button>
+          </div>
+        </div>
+      `;
+      // Re-attach prompt click handler to new prompts DOM
+      const newPrompts = document.getElementById('chatPrompts');
+      if (newPrompts) {
+        newPrompts.addEventListener('click', (e) => {
+          const chip = e.target.closest('.prompt-chip');
+          if (chip) {
+            const promptText = chip.getAttribute('data-prompt') || chip.innerText.trim();
+            handleChatSubmit(promptText);
+          }
+        });
+      }
+    });
   }
 });
