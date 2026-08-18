@@ -753,10 +753,17 @@ document.addEventListener('DOMContentLoaded', () => {
       Call us at <strong>+91 77802 71969</strong> or click <strong>WhatsApp</strong> for exact program fee details!`
     },
     {
-      keywords: ['who', 'about', 'smarttopia', 'company', 'vision', 'mission', 'why', 'founder'],
+      keywords: ['founder', 'ceo', 'owner', 'bhaskar', 'basireddy', 'started', 'who built', 'leadership', 'director', 'management'],
+      response: `<strong>Smarttopia Edutech Leadership & Founder:</strong><br><br>
+      👤 <strong>Founder & CEO:</strong> Bhaskar Basireddy<br>
+      🎯 <strong>Mission & Vision:</strong> Empowering students and aspiring tech professionals with industry-ready practical engineering skills, live capstone projects, and 100% placement guidance.<br><br>
+      Under Bhaskar Basireddy's leadership, Smarttopia Edutech has empowered <strong>1000+ students</strong> across 50+ specialized programs in partnership with <strong>25+ industry hiring partners</strong>.`
+    },
+    {
+      keywords: ['who', 'about', 'smarttopia', 'company', 'vision', 'mission', 'why'],
       response: `<strong>About Smarttopia Edutech:</strong><br>
-      Smarttopia Edutech is a premier tech skill-building ecosystem dedicated to bridging the gap between university education and real-world tech industry expectations.<br><br>
-      We empower students and working professionals with cutting-edge software engineering, AI, VLSI, and data domain skills combined with practical project experience and placement guidance.`
+      Smarttopia Edutech is a premier tech skill-building ecosystem founded by <strong>Bhaskar Basireddy (Founder & CEO)</strong>.<br><br>
+      We are dedicated to bridging the gap between university education and real-world tech industry expectations by empowering students with software engineering, AI, VLSI, and data skills through live capstone projects and guaranteed placement assistance.`
     },
     {
       keywords: ['python', 'django'],
@@ -913,7 +920,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Process User Input via OpenAI ChatGPT API
   const queryOpenAiApi = async (userPrompt, apiKey) => {
     const systemPrompt = `You are Smarttopia AI, the official intelligent virtual assistant for Smarttopia Edutech.
-Smarttopia Edutech is an ed-tech & skill training company located at: 5th Floor, 1318, JP Nagar Phase 2, Bengaluru, Karnataka, 560078. Phone: +91 77802 71969, Email: hr@smarttopiaedutech.com.
+Smarttopia Edutech was founded by Bhaskar Basireddy (Founder & CEO) and is located at: 5th Floor, 1318, JP Nagar Phase 2, Bengaluru, Karnataka, 560078. Phone: +91 77802 71969, Email: hr@smarttopiaedutech.com.
 We offer programs in: Python & Django Development, Full Stack Web Dev (MERN), Data Science & Analytics, Artificial Intelligence & Machine Learning, VLSI Design, Embedded Systems & IoT, Cyber Security, and Cloud Computing.
 We offer 100% placement assistance, hands-on internships, capstone projects, 1-on-1 mentorship, resume reviews, and mock interviews.
 Answer user questions concisely, professionally, and accurately formatted in clean HTML tags (<p>, <ul>, <li>, <strong>).`;
